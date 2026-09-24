@@ -1,0 +1,298 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Financial Firm Register Search API",
+    "description": "Search a bank, insurer, securities firm or payment firm on regulators' public registers in selected jurisdictions (US, Canada, Australia, Japan, Taiwan, Korea, EU): fuzzy and native-script name search, identifier lookup (LEI, RSSD, FDIC certificate, ABN, AFS licence, Korean corporate number and more), status, dates and a link to the register. Firms only.",
+    "version": "0.1.0"
+  },
+  "paths": {
+    "/health": {
+      "get": {
+        "summary": "Health check",
+        "operationId": "health_health_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/check": {
+      "get": {
+        "summary": "Is this financial firm on a regulator's register?",
+        "operationId": "Check an institution by name",
+        "parameters": [
+          {
+            "name": "name",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 2,
+              "maxLength": 200,
+              "description": "Firm name in any script, e.g. Mizuho Bank, 우리은행 or 台灣銀行",
+              "title": "Name"
+            },
+            "description": "Firm name in any script, e.g. Mizuho Bank, 우리은행 or 台灣銀行"
+          },
+          {
+            "name": "country",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Optional ISO country code, e.g. JP"
+          },
+          {
+            "name": "include_inactive",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "boolean",
+              "description": "Also return cancelled, closed or merged registrations",
+              "default": false,
+              "title": "Include Inactive"
+            },
+            "description": "Also return cancelled, closed or merged registrations"
+          },
+          {
+            "name": "threshold",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "number",
+              "description": "Minimum match score 0.5–1.0 (default 0.8)",
+              "default": 0.8,
+              "title": "Threshold"
+            },
+            "description": "Minimum match score 0.5–1.0 (default 0.8)"
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "description": "Maximum results, 1–25",
+              "default": 10,
+              "title": "Limit"
+            },
+            "description": "Maximum results, 1–25"
+          },
+          {
+            "name": "max_register_age_days",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Skip register copies older than this many days, e.g. 365"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/lookup": {
+      "get": {
+        "summary": "Find registrations by an identifier such as an LEI",
+        "operationId": "Look up by identifier",
+        "parameters": [
+          {
+            "name": "id_type",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "description": "Identifier type, e.g. lei, rssd, fdic_cert, abn, afsl, kr_crno, kr_bzno. Full list: GET /v1/registers",
+              "title": "Id Type"
+            },
+            "description": "Identifier type, e.g. lei, rssd, fdic_cert, abn, afsl, kr_crno, kr_bzno. Full list: GET /v1/registers"
+          },
+          {
+            "name": "value",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 2,
+              "maxLength": 40,
+              "description": "Identifier value; spaces and dashes are ignored",
+              "title": "Value"
+            },
+            "description": "Identifier value; spaces and dashes are ignored"
+          },
+          {
+            "name": "max_register_age_days",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Skip register copies older than this many days"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/institutions/{institution_id}": {
+      "get": {
+        "summary": "One registration by its id",
+        "operationId": "Institution detail",
+        "parameters": [
+          {
+            "name": "institution_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Institution Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/registers": {
+      "get": {
+        "summary": "Which registers are covered, how fresh, what they mean",
+        "operationId": "Registers covered",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "HTTPValidationError": {
+        "properties": {
+          "detail": {
+            "items": {
+              "$ref": "#/components/schemas/ValidationError"
+            },
+            "type": "array",
+            "title": "Detail"
+          }
+        },
+        "type": "object",
+        "title": "HTTPValidationError"
+      },
+      "ValidationError": {
+        "properties": {
+          "loc": {
+            "items": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "integer"
+                }
+              ]
+            },
+            "type": "array",
+            "title": "Location"
+          },
+          "msg": {
+            "type": "string",
+            "title": "Message"
+          },
+          "type": {
+            "type": "string",
+            "title": "Error Type"
+          },
+          "input": {
+            "title": "Input"
+          },
+          "ctx": {
+            "type": "object",
+            "title": "Context"
+          }
+        },
+        "type": "object",
+        "required": [
+          "loc",
+          "msg",
+          "type"
+        ],
+        "title": "ValidationError"
+      }
+    }
+  },
+  "servers": [
+    {
+      "url": "https://financial-firm-register-search.p.rapidapi.com",
+      "description": "RapidAPI gateway"
+    }
+  ]
+}
