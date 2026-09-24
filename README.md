@@ -2,7 +2,7 @@
 
 Is this bank, insurer or broker on a regulator's register? US, CA, AU, JP, TW, KR, EU in one call.
 
-**Try it (free tier, no card):** [https://rapidapi.com/193market/api/financial-firm-register-search](https://rapidapi.com/193market/api/financial-firm-register-search) · also on [api.market](https://api.market/store/193market/financial-firm-register-search)
+**Try it (free tier for evaluation):** [https://rapidapi.com/193market/api/financial-firm-register-search](https://rapidapi.com/193market/api/financial-firm-register-search) · also on [api.market](https://api.market/store/193market/financial-firm-register-search)
 
 Search a bank, insurer, securities firm or payment firm on regulators' public registers in selected jurisdictions (US, Canada, Australia, Japan, Taiwan, Korea, EU): fuzzy and native-script name search, identifier lookup (LEI, RSSD, FDIC certificate, ABN, AFS licence, Korean corporate number and more), status, dates and a link to the register. Firms only.
 
@@ -117,7 +117,7 @@ The full OpenAPI 3 specification is in [`openapi.json`](openapi.json).
 | Plan | Price | Included per month |
 |---|---|---|
 | BASIC | free | a small monthly quota for evaluation |
-| PRO / ULTRA / MEGA | from $49 / month | 1,000+ requests, per-request overage, higher rate limits |
+| PRO / ULTRA / MEGA | from $49 / month | larger monthly quotas, per-request overage, higher rate limits |
 
 Current prices are always on the [RapidAPI pricing page](https://rapidapi.com/193market/api/financial-firm-register-search/pricing). Error responses (4xx/5xx) are not charged on api.market.
 
